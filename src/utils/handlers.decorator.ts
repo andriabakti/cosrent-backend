@@ -9,7 +9,7 @@ export enum Methods {
   DELETE = 'delete'
 }
 
-export interface IRouter {
+export interface RouteDefinition {
   method: Methods,
   path: string,
   handlerName: string | symbol
@@ -20,7 +20,7 @@ const methodDecoratorFactory = (method: Methods) => {
     return (target, propertyKey) => {
       const contollerClass = target.constructor
 
-      const routers: IRouter[] = Reflect.hasMetadata(
+      const routers: RouteDefinition[] = Reflect.hasMetadata(
         MetadataKeys.ROUTERS, contollerClass) ?
         Reflect.getMetadata(MetadataKeys.ROUTERS, contollerClass) : []
 

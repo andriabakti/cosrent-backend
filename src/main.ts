@@ -6,19 +6,18 @@ import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
 import cors from 'cors'
-import { controllers } from './controller'
-import { MetadataKeys } from './utils/metadata.keys'
-import { IRouter } from './utils/handlers.decorator'
+import { baseRouter } from './utils/baseRouter'
 import 'reflect-metadata'
+import { routers } from './utils/index.router'
 
 class App {
   public instance: Application
 
   constructor() {
+    dotenv.config()
     this.instance = express()
     this.plugins()
     this.routes()
-    dotenv.config()
   }
 
   protected plugins(): void {
@@ -36,24 +35,8 @@ class App {
       res.send('root endpoint')
     })
 
-    const info: Array<{ api: string, handler: string }> = []
-    controllers.forEach((controllerClass) => {
-      const controllerInstance: { [handleName: string]: Handler } = new controllerClass() as any
-
-      const basePath: string = Reflect.getMetadata(MetadataKeys.BASE_PATH, controllerClass)
-      const routers: IRouter[] = Reflect.getMetadata(MetadataKeys.ROUTERS, controllerClass)
-
-      const exRouter = express.Router()
-
-      routers.forEach(({method, path, handlerName}) => {
-        exRouter[method](path, controllerInstance[String(handlerName)].bind(controllerInstance))
-        info.push({
-          api: `${method.toLocaleUpperCase()} ${basePath + path}`,
-          handler: `${controllerClass.name}.${String(handlerName)}`
-        })
-      })
-
-      this.instance.use(basePath, exRouter)
+    routers.forEach((controllerClass) => {
+      baseRouter(controllerClass, this.instance)
     })
   }
 }
