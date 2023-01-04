@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf build && tsc",
-    "start": "rimraf build && tsc -w",
+    "build": "rimraf build && tsc -p .",
+    "start": "node ./build/index.js",
     "dev": "tsnd --respawn ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -35,6 +35,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^6.0.1",
+    "mongoose": "^6.8.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "typedi": "^0.10.0"
